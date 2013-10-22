@@ -1,12 +1,12 @@
 var AppRouter = Backbone.Router.extend({
     routes: {
         ""                  	: "home",
-        "wines/page/:page"  	: "pagelist",
+        "courses/page/:page"  	: "pagelist",
     	"upcoming/uni/:uni"	: "upcoming",
     	"upcoming"	    	: "upcoming",
-        "wines/add"         	: "addWine",
-        "wines/:id"         	: "wineDetails",
-        "wines"		    	: "list",
+        "courses/add"         	: "addCourse",
+        "courses/:id"         	: "courseDetails",
+        "courses"		: "list",
         "about"             	: "about"
     },
 
@@ -40,10 +40,10 @@ var AppRouter = Backbone.Router.extend({
 	console.log("Hit list target");
         var p = page ? parseInt(page, 10) : 1;
 	setCollectionType('all');
-        var wineList = buildCollection();
+        var courseList = buildCollection();
 	
-	wineList.fetch({success: function(){
-          	     $("#content").html(new WineListView({model: wineList, page: p}).el);
+	courseList.fetch({success: function(){
+          	     $("#content").html(new CourseListView({model: courseList, page: p}).el);
         	    }});
         this.headerView.selectMenuItem('home-menu');
     },
@@ -51,10 +51,10 @@ var AppRouter = Backbone.Router.extend({
     pagelist: function(page) {
 	console.log("Hit list target");
         var p = page ? parseInt(page, 10) : 1;
-        //var wineList = new WineCollection();
-        var wineList = buildCollection();
-        wineList.fetch({success: function(){
-            $("#content").html(new WineListView({model: wineList, page: p}).el);
+        //var courseList = new CourseCollection();
+        var courseList = buildCollection();
+        courseList.fetch({success: function(){
+            $("#content").html(new CourseListView({model: courseList, page: p}).el);
         }});
         this.headerView.selectMenuItem('home-menu');
     },
@@ -67,22 +67,22 @@ var AppRouter = Backbone.Router.extend({
 	setCollectionType('upcoming');
         var upcomingCourses = buildCollection();
         upcomingCourses.fetch({success: function(){
-            $("#content").html(new WineListView({model: upcomingCourses, page: 1}).el);
+            $("#content").html(new CourseListView({model: upcomingCourses, page: 1}).el);
         }});
         this.headerView.selectMenuItem('home-menu');
     },
 
-    wineDetails: function (id) {
-        var wine = new Wine({_id: id});
-        wine.fetch({success: function(){
-            $("#content").html(new WineView({model: wine}).el);
+    courseDetails: function (id) {
+        var course = new Course({_id: id});
+        course.fetch({success: function(){
+            $("#content").html(new CourseView({model: course}).el);
         }});
         this.headerView.selectMenuItem();
     },
 
-    addWine: function() {
-        var wine = new Wine();
-        $('#content').html(new WineView({model: wine}).el);
+    addCourse: function() {
+        var course = new Course();
+        $('#content').html(new CourseView({model: course}).el);
         this.headerView.selectMenuItem('add-menu');
 	},
 
@@ -108,7 +108,7 @@ function getCollectionType() {
 function buildCollection() {
    var collection = "";
    if(getCollectionType() === "all") {
-    collection =  new WineCollection();
+    collection =  new CourseCollection();
    }else{
     collection =  new UpcomingCourses();
    }
@@ -122,7 +122,7 @@ function buildCollection() {
  *The problem we are having with searches is that the template view is being
  *obsificted from the search request because of the parameters.
  */
-utils.loadTemplate(['UniversitySelectView','HomeView', 'HeaderView', 'WineView', 'WineListItemView', 'AboutView'], function() {
+utils.loadTemplate(['UniversitySelectView','HomeView', 'HeaderView', 'CourseView', 'CourseListItemView', 'AboutView'], function() {
     console.log("Can we see the loading of the templates");
     app = new AppRouter();
     Backbone.history.start();

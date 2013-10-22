@@ -11,9 +11,9 @@ window.Paginator = Backbone.View.extend({
         var items = this.model.models;
 	pag.init(items,8);
 	$(this.el).html("<span>"
-		+"<button onClick='pag.prev();location.href=\"#wines/page/"+pag.getPrevPosition()+"\";'>&lt;</button>"
+		+"<button onClick='pag.prev();location.href=\"#courses/page/"+pag.getPrevPosition()+"\";'>&lt;</button>"
 		+ "<button type='button' id='paginationDisplay' >"+pag.getDisplayText() + "</button>"
-		+"<button onClick='pag.next();location.href=\"#wines/page/"+pag.getNextPosition()+"\";'>&gt;</button></span>");
+		+"<button onClick='pag.next();location.href=\"#courses/page/"+pag.getNextPosition()+"\";'>&gt;</button></span>");
         return this;
     }
 

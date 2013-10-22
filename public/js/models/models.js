@@ -1,6 +1,6 @@
-window.Wine = Backbone.Model.extend({
+window.Course = Backbone.Model.extend({
 
-    urlRoot: "/wines",
+    urlRoot: "/courses",
 
     idAttribute: "_id",
 
@@ -35,7 +35,7 @@ window.Universities = Backbone.Collection.extend({
 });
 
 window.UpcomingCourses = Backbone.Collection.extend({
-    model: Wine,
+    model: Course,
     url: '/upcoming',
     
     
@@ -63,7 +63,7 @@ window.UpcomingCourses = Backbone.Collection.extend({
 
 
 window.Filter = Backbone.Collection.extend({
-    model: Wine,
+    model: Course,
     url: "/upcoming"
 /*
     urlRoot : "/upcoming",
@@ -77,7 +77,7 @@ window.Filter = Backbone.Collection.extend({
     }
     */
 });
-window.WineCollection = Backbone.Collection.extend({
-    model: Wine,
-    url: "/wines"
+window.CourseCollection = Backbone.Collection.extend({
+    model: Course,
+    url: "/courses"
 });

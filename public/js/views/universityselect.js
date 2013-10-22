@@ -13,6 +13,12 @@ window.UniversitySelectView = Backbone.View.extend({
         var value = $(event.target).val();
         console.log("Select: "+value);
         $('#filter').text($(event.target).val());
+        $('#filter').slideDown('slow');
+        $( "#filter" ).click(function() {
+             $( this ).slideUp('slow');
+             $(this).text("");
+        });
+        
         //change[target.name] = target.value;
         //window.location.href=$(this).val();
         console.log("Selected: "+value);

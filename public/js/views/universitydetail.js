@@ -1,4 +1,4 @@
-window.WineView = Backbone.View.extend({
+window.CourseView = Backbone.View.extend({
 
     initialize: function () {
         this.render();
@@ -12,7 +12,7 @@ window.WineView = Backbone.View.extend({
     events: {
         "change"        : "change",
         "click .save"   : "beforeSave",
-        "click .delete" : "deleteWine",
+        "click .delete" : "deleteCourse",
         "drop #picture" : "dropHandler",
 	"click #vid"    : "showVideo"
     },
@@ -43,19 +43,19 @@ window.WineView = Backbone.View.extend({
             utils.displayValidationErrors(check.messages);
             return false;
         }
-        this.saveWine();
+        this.saveCourse();
         return false;
     },
 
-    saveWine: function () {
+    saveCourse: function () {
     /* Do nothing
         var self = this;
         console.log('before save');
         this.model.save(null, {
             success: function (model) {
                 self.render();
-                app.navigate('wines/' + model.id, false);
-                utils.showAlert('Success!', 'Wine saved successfully', 'alert-success');
+                app.navigate('courses/' + model.id, false);
+                utils.showAlert('Success!', 'Course saved successfully', 'alert-success');
             },
             error: function () {
                 utils.showAlert('Error', 'An error occurred while trying to delete this item', 'alert-error');
@@ -64,12 +64,12 @@ window.WineView = Backbone.View.extend({
 	*/
     },
 
-    deleteWine: function () {
+    deleteCourse: function () {
 	
 	    /* Do Nothing
         this.model.destroy({
             success: function () {
-                alert('Wine deleted successfully');
+                alert('Course deleted successfully');
                 window.history.back();
             }
         });

@@ -1,7 +1,7 @@
 server.js
 ---------
 app: express
-app.get('/wines', wine.findAll);
+app.get('/courses', course.findAll);
 
 
 
@@ -11,10 +11,10 @@ var AppRouter = Backbone.Router.extend({
 
     routes: {
         ""                  : "home",
-        "wines"		    : "list", 
-        "wines/page/:page"	: "list",
-        "wines/add"         : "addWine",
-        "wines/:id"         : "wineDetails",
+        "courses"		    : "list", 
+        "courses/page/:page"	: "list",
+        "courses/add"         : "addCourse",
+        "courses/:id"         : "courseDetails",
         "about"             : "about"
     },
 
@@ -33,15 +33,15 @@ var AppRouter = Backbone.Router.extend({
 
     list: function(page) {
         var p = page ? parseInt(page, 10) : 1;
-        var wineList = new WineCollection(); <-- Comes from model and is placed on the window object
-        wineList.fetch({success: function(){
-            $("#content").html(new WineListView({model: wineList, page: p}).el);
+        var courseList = new CourseCollection(); <-- Comes from model and is placed on the window object
+        courseList.fetch({success: function(){
+            $("#content").html(new CourseListView({model: courseList, page: p}).el);
         }});
         this.headerView.selectMenuItem('home-menu');
     },
 
 
-utils.loadTemplate(['HomeView', 'HeaderView', 'WineView', 'WineListItemView', 'AboutView'], function() {
+utils.loadTemplate(['HomeView', 'HeaderView', 'CourseView', 'CourseListItemView', 'AboutView'], function() {
     app = new AppRouter();
     Backbone.history.start();
 });
@@ -72,9 +72,9 @@ window.utils = {
 
 model.js
 ---------
-window.Wine = Backbone.Model.extend({
+window.Course = Backbone.Model.extend({
 
-    urlRoot: "/wines",
+    urlRoot: "/courses",
 
     idAttribute: "_id",
 
@@ -127,33 +127,33 @@ window.Wine = Backbone.Model.extend({
     }
 });
 
-window.WineCollection = Backbone.Collection.extend({
+window.CourseCollection = Backbone.Collection.extend({
 
-    model: Wine,
+    model: Course,
 
-    url: "/wines"
+    url: "/courses"
 
 });
 
 
-Winelist.js
+Courselist.js
 ---------------
-window.WineListView = Backbone.View.extend({
+window.CourseListView = Backbone.View.extend({
 
     initialize: function () {
         this.render();
     },
 
     render: function () {
-        var wines = this.model.models;
-        var len = wines.length;
+        var courses = this.model.models;
+        var len = courses.length;
         var startPos = (this.options.page - 1) * 8;
         var endPos = Math.min(startPos + 8, len);
 
         $(this.el).html('<ul class="thumbnails"></ul>');
 
         for (var i = startPos; i < endPos; i++) {
-            $('.thumbnails', this.el).append(new WineListItemView({model: wines[i]}).render().el);
+            $('.thumbnails', this.el).append(new CourseListItemView({model: courses[i]}).render().el);
         }
 
         $(this.el).append(new Paginator({model: this.model, page: this.options.page}).render().el);
@@ -162,7 +162,7 @@ window.WineListView = Backbone.View.extend({
     }
 });
 
-window.WineListItemView = Backbone.View.extend({
+window.CourseListItemView = Backbone.View.extend({
 
     tagName: "li",
 
@@ -179,9 +179,9 @@ window.WineListItemView = Backbone.View.extend({
 });
 
 
-WineListItemView.html
+CourseListItemView.html
 -----------------
-<a href="#wines/<%= _id %>" class="thumbnail plain" style="text-align: center;">
+<a href="#courses/<%= _id %>" class="thumbnail plain" style="text-align: center;">
     <img src="<%= picture === null ? 'pics/generic.jpg' : 'pics/' + picture %>" height="150" width="125" alt="">
     <h5><%= name %></h5>
     <%= year %> <%= grapes %><br/>
