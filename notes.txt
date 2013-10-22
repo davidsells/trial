@@ -1,0 +1,190 @@
+server.js
+---------
+app: express
+app.get('/wines', wine.findAll);
+
+
+
+public/js/main.js
+---------
+var AppRouter = Backbone.Router.extend({
+
+    routes: {
+        ""                  : "home",
+        "wines"		    : "list", 
+        "wines/page/:page"	: "list",
+        "wines/add"         : "addWine",
+        "wines/:id"         : "wineDetails",
+        "about"             : "about"
+    },
+
+    initialize: function () {
+        this.headerView = new HeaderView();
+        $('.header').html(this.headerView.el);
+    },
+
+    home: function (id) {
+        if (!this.homeView) {
+            this.homeView = new HomeView();
+        }
+        $('#content').html(this.homeView.el);
+        this.headerView.selectMenuItem('home-menu');
+    },
+
+    list: function(page) {
+        var p = page ? parseInt(page, 10) : 1;
+        var wineList = new WineCollection(); <-- Comes from model and is placed on the window object
+        wineList.fetch({success: function(){
+            $("#content").html(new WineListView({model: wineList, page: p}).el);
+        }});
+        this.headerView.selectMenuItem('home-menu');
+    },
+
+
+utils.loadTemplate(['HomeView', 'HeaderView', 'WineView', 'WineListItemView', 'AboutView'], function() {
+    app = new AppRouter();
+    Backbone.history.start();
+});
+
+
+utils.js
+---------
+window.utils = {
+
+    // Asynchronously load templates located in separate .html files
+    loadTemplate: function(views, callback) {
+
+        var deferreds = [];
+
+        $.each(views, function(index, view) {
+            if (window[view]) {
+                deferreds.push($.get('tpl/' + view + '.html', function(data) {
+                    window[view].prototype.template = _.template(data);
+                }));
+            } else {
+                alert(view + " not found");
+            }
+        });
+
+        $.when.apply(null, deferreds).done(callback);
+    },
+
+
+model.js
+---------
+window.Wine = Backbone.Model.extend({
+
+    urlRoot: "/wines",
+
+    idAttribute: "_id",
+
+    initialize: function () {
+        this.validators = {};
+
+        this.validators.name = function (value) {
+            return value.length > 0 ? {isValid: true} : {isValid: false, message: "You must enter a name"};
+        };
+
+        this.validators.grapes = function (value) {
+            return value.length > 0 ? {isValid: true} : {isValid: false, message: "You must enter a grape variety"};
+        };
+
+        this.validators.country = function (value) {
+            return value.length > 0 ? {isValid: true} : {isValid: false, message: "You must enter a country"};
+        };
+    },
+
+    validateItem: function (key) {
+        return (this.validators[key]) ? this.validators[key](this.get(key)) : {isValid: true};
+    },
+
+    // TODO: Implement Backbone's standard validate() method instead.
+    validateAll: function () {
+
+        var messages = {};
+
+        for (var key in this.validators) {
+            if(this.validators.hasOwnProperty(key)) {
+                var check = this.validators[key](this.get(key));
+                if (check.isValid === false) {
+                    messages[key] = check.message;
+                }
+            }
+        }
+
+        return _.size(messages) > 0 ? {isValid: false, messages: messages} : {isValid: true};
+    },
+
+    defaults: {
+        _id: null,
+        name: "",
+        grapes: "",
+        country: "USA",
+        region: "California",
+        year: "",
+        description: "",
+        picture: null
+    }
+});
+
+window.WineCollection = Backbone.Collection.extend({
+
+    model: Wine,
+
+    url: "/wines"
+
+});
+
+
+Winelist.js
+---------------
+window.WineListView = Backbone.View.extend({
+
+    initialize: function () {
+        this.render();
+    },
+
+    render: function () {
+        var wines = this.model.models;
+        var len = wines.length;
+        var startPos = (this.options.page - 1) * 8;
+        var endPos = Math.min(startPos + 8, len);
+
+        $(this.el).html('<ul class="thumbnails"></ul>');
+
+        for (var i = startPos; i < endPos; i++) {
+            $('.thumbnails', this.el).append(new WineListItemView({model: wines[i]}).render().el);
+        }
+
+        $(this.el).append(new Paginator({model: this.model, page: this.options.page}).render().el);
+
+        return this;
+    }
+});
+
+window.WineListItemView = Backbone.View.extend({
+
+    tagName: "li",
+
+    initialize: function () {
+        this.model.bind("change", this.render, this);
+        this.model.bind("destroy", this.close, this);
+    },
+
+    render: function () {
+        $(this.el).html(this.template(this.model.toJSON()));
+        return this;
+    }
+
+});
+
+
+WineListItemView.html
+-----------------
+<a href="#wines/<%= _id %>" class="thumbnail plain" style="text-align: center;">
+    <img src="<%= picture === null ? 'pics/generic.jpg' : 'pics/' + picture %>" height="150" width="125" alt="">
+    <h5><%= name %></h5>
+    <%= year %> <%= grapes %><br/>
+    <i class="icon-globe"></i> <%= region %>, <%= country %>
+</a>
+
